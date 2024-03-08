@@ -112,10 +112,8 @@ describe("get", function () {
 
 // describe("update", function () {
 //   const updateData = {
-//     name: "New",
-//     description: "New Description",
-//     numEmployees: 10,
-//     logoUrl: "http://new.img",
+//     salary:75000,
+//     equity:.5
 //   };
 
 //   test("works", async function () {
@@ -184,68 +182,68 @@ describe("get", function () {
 //   });
 // });
 
-// /************************************** remove */
+// // /************************************** remove */
 
-// describe("remove", function () {
-//   test("works", async function () {
-//     await Company.remove("c1");
-//     const res = await db.query(
-//         "SELECT handle FROM companies WHERE handle='c1'");
-//     expect(res.rows.length).toEqual(0);
-//   });
+// // describe("remove", function () {
+// //   test("works", async function () {
+// //     await Company.remove("c1");
+// //     const res = await db.query(
+// //         "SELECT handle FROM companies WHERE handle='c1'");
+// //     expect(res.rows.length).toEqual(0);
+// //   });
 
-//   test("not found if no such company", async function () {
-//     try {
-//       await Company.remove("nope");
-//       fail();
-//     } catch (err) {
-//       expect(err instanceof NotFoundError).toBeTruthy();
-//     }
-//   });
+// //   test("not found if no such company", async function () {
+// //     try {
+// //       await Company.remove("nope");
+// //       fail();
+// //     } catch (err) {
+// //       expect(err instanceof NotFoundError).toBeTruthy();
+// //     }
+// //   });
 
-// /*************************************** filter */ 
+// // /*************************************** filter */ 
 
-//  describe("filter", function(){
-//   test("works test1", async function(){
-//     const params = {
-//       name: "C",
-//       minEmployees:2,
-//       maxEmployees:2
-//     }
-//     const companies = await Company.filterCompanies(params)
-//     expect(companies).toEqual([{'name': "C2", 'num_employees': 2, description:"Desc2", handle:"c2", logo_url:"http://c2.img"}])
-//   })
+// //  describe("filter", function(){
+// //   test("works test1", async function(){
+// //     const params = {
+// //       name: "C",
+// //       minEmployees:2,
+// //       maxEmployees:2
+// //     }
+// //     const companies = await Company.filterCompanies(params)
+// //     expect(companies).toEqual([{'name': "C2", 'num_employees': 2, description:"Desc2", handle:"c2", logo_url:"http://c2.img"}])
+// //   })
 
-//   test("works test2", async function(){
-//     const params = {
-//       name: "c",
-//       minEmployees:1,
-//       maxEmployees:3
-//     }
-//     const companies = await Company.filterCompanies(params)
-//     expect(companies).toEqual([{'name': "C1", 'num_employees': 1, description:"Desc1", handle:"c1", logo_url:"http://c1.img"},
-//     {'name': "C2", 'num_employees': 2, description:"Desc2", handle:"c2", logo_url:"http://c2.img"},
-//     {'name': "C3", 'num_employees': 3, description:"Desc3", handle:"c3", logo_url:"http://c3.img"}])
-//   })
+// //   test("works test2", async function(){
+// //     const params = {
+// //       name: "c",
+// //       minEmployees:1,
+// //       maxEmployees:3
+// //     }
+// //     const companies = await Company.filterCompanies(params)
+// //     expect(companies).toEqual([{'name': "C1", 'num_employees': 1, description:"Desc1", handle:"c1", logo_url:"http://c1.img"},
+// //     {'name': "C2", 'num_employees': 2, description:"Desc2", handle:"c2", logo_url:"http://c2.img"},
+// //     {'name': "C3", 'num_employees': 3, description:"Desc3", handle:"c3", logo_url:"http://c3.img"}])
+// //   })
 
-//   test("works test3", async function(){
-//     const params = {
-//       name: "c"
-//     }
-//     const companies = await Company.filterCompanies(params)
-//     expect(companies).toEqual([{'name': "C1", 'num_employees': 1, description:"Desc1", handle:"c1", logo_url:"http://c1.img"},
-//     {'name': "C2", 'num_employees': 2, description:"Desc2", handle:"c2", logo_url:"http://c2.img"},
-//     {'name': "C3", 'num_employees': 3, description:"Desc3", handle:"c3", logo_url:"http://c3.img"}])
-//   })
+// //   test("works test3", async function(){
+// //     const params = {
+// //       name: "c"
+// //     }
+// //     const companies = await Company.filterCompanies(params)
+// //     expect(companies).toEqual([{'name': "C1", 'num_employees': 1, description:"Desc1", handle:"c1", logo_url:"http://c1.img"},
+// //     {'name': "C2", 'num_employees': 2, description:"Desc2", handle:"c2", logo_url:"http://c2.img"},
+// //     {'name': "C3", 'num_employees': 3, description:"Desc3", handle:"c3", logo_url:"http://c3.img"}])
+// //   })
 
-//   test("works test4", async function(){
-//     const params = {
-//       name: "a",
-//       minEmployees:6,
-//       maxEmployees:8
-//     }
-//     const companies = await Company.filterCompanies(params)
-//     expect(companies).toEqual([])
-//   })
-//  })
+// //   test("works test4", async function(){
+// //     const params = {
+// //       name: "a",
+// //       minEmployees:6,
+// //       maxEmployees:8
+// //     }
+// //     const companies = await Company.filterCompanies(params)
+// //     expect(companies).toEqual([])
+// //   })
+// //  })
 
