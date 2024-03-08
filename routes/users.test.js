@@ -338,7 +338,6 @@ describe("PATCH /users/:username", () => {
         .set("authorization", `Bearer ${u2Token}`);
     expect(resp.statusCode).toEqual(401)
   });
-
 })
 
 /************************************** DELETE /users/:username */
