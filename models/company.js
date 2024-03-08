@@ -148,7 +148,11 @@ class Company {
   */
 
   static async filterCompanies(params) {
-    let query = 'SELECT * FROM companies WHERE '
+    let query = `SELECT handle, 
+                name, 
+                description, 
+                num_employees AS "numEmployees", 
+                logo_url AS "logoUrl" FROM companies WHERE `
     let inputs = []
     if (params.name) {
       query += 'name LIKE $1 OR name LIKE $2'

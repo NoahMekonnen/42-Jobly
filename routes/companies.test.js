@@ -237,7 +237,7 @@ describe("GET /companies", function(){
 
   test("works test2", async function(){
     const res = request(app)
-    .get('/companies?minEmployees=10000')
+    .get('/companies?minEmployees=1000')
     expect(res.statusCode).toEqual(200)
   })
 })
