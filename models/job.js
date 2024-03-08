@@ -68,6 +68,7 @@ class Job {
       [id]);
 
     const job = jobRes.rows[0];
+    console.log(job,"JOBBB")
 
     if (!job) throw new NotFoundError(`No job: ${id}`);
 
@@ -94,7 +95,7 @@ class Job {
       });
     const IdVarIdx = "$" + (values.length + 1);
 
-    const querySql = `UPDATE companies 
+    const querySql = `UPDATE jobs 
                       SET ${setCols} 
                       WHERE id = ${IdVarIdx} 
                       RETURNING title, 
@@ -102,7 +103,7 @@ class Job {
                                 equity, 
                                 company_handle AS "companyHandle"
                                 `;
-    const result = await db.query(querySql, [...values, handle]);
+    const result = await db.query(querySql, [...values, id]);
     const job = result.rows[0];
 
     if (!job) throw new NotFoundError(`No job: ${id}`);
