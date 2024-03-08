@@ -65,6 +65,7 @@ describe("findAll", function () {
     
     test("works: no filter", async function () {
         await Job.create(newJob2)
+        await Job.create(newJob3)
         let jobs = await Job.findAll();
         expect(jobs).toEqual([
             {
@@ -72,34 +73,40 @@ describe("findAll", function () {
                 salary: 40000,
                 equity: "0",
                 companyHandle: "c1"
+            },
+            {
+                title: "teacher",
+                salary: 70000,
+                equity: 0,
+                companyHandle: "c1"
             }
         ]);
     });
 });
 
-// /************************************** get */
+/************************************** get */
 
-// describe("get", function () {
-//   test("works", async function () {
-//     let company = await Company.get("c1");
-//     expect(company).toEqual({
-//       handle: "c1",
-//       name: "C1",
-//       description: "Desc1",
-//       numEmployees: 1,
-//       logoUrl: "http://c1.img",
-//     });
-//   });
+describe("get", function () {
+  test("works", async function () {
+    await Job.create(newJob2)
+    let job = await Job.get("1");
+    expect(company).toEqual({
+        title: "janitor",
+        salary: 40000,
+        equity: "0",
+        companyHandle: "c1"
+    });
+  });
 
-//   test("not found if no such company", async function () {
-//     try {
-//       await Company.get("nope");
-//       fail();
-//     } catch (err) {
-//       expect(err instanceof NotFoundError).toBeTruthy();
-//     }
-//   });
-// });
+  test("not found if no such company", async function () {
+    try {
+      await Job.get(5);
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});
 
 // /************************************** update */
 
