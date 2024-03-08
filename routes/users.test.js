@@ -160,7 +160,9 @@ describe("GET /users", function () {
         .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(500);
   });
+
 });
+
 
 /************************************** GET /users/:username */
 
