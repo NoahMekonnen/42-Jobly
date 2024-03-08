@@ -5,7 +5,7 @@
 const jsonschema = require("jsonschema");
 const express = require("express");
 
-const { BadRequestError, ExpressError } = require("../expressError");
+const { BadRequestError, UnauthorizedError } = require("../expressError");
 const { ensureLoggedIn } = require("../middleware/auth");
 const Company = require("../models/company");
 
@@ -27,6 +27,8 @@ const router = new express.Router();
 
 router.post("/", ensureLoggedIn, async function (req, res, next) {
   try {
+    if (!(res.locals.user.isAdmin)) throw new UnauthorizedError("You must be an Admin to do this")
+
     const validator = jsonschema.validate(req.body, companyNewSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);
@@ -108,6 +110,8 @@ router.get("/:handle", async function (req, res, next) {
 
 router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
   try {
+    if (!(res.locals.user.isAdmin)) throw new UnauthorizedError("You must be an Admin to do this")
+
     const validator = jsonschema.validate(req.body, companyUpdateSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);
@@ -128,6 +132,8 @@ router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
 
 router.delete("/:handle", ensureLoggedIn, async function (req, res, next) {
   try {
+    if (!(res.locals.user.isAdmin)) throw new UnauthorizedError("You must be an Admin to do this")
+
     await Company.remove(req.params.handle);
     return res.json({ deleted: req.params.handle });
   } catch (err) {

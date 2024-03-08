@@ -216,7 +216,7 @@ describe("remove", function () {
       maxEmployees:2
     }
     const companies = await Company.filterCompanies(params)
-    expect(companies).toEqual([{'name': "C2", 'num_employees': 2, description:"Desc2", handle:"c2", logo_url:"http://c2.img"}])
+    expect(companies).toEqual([{'name': "C2", numEmployees: 2, description:"Desc2", handle:"c2", logoUrl:"http://c2.img"}])
   })
 
   test("works test2", async function(){
@@ -226,9 +226,9 @@ describe("remove", function () {
       maxEmployees:3
     }
     const companies = await Company.filterCompanies(params)
-    expect(companies).toEqual([{'name': "C1", 'num_employees': 1, description:"Desc1", handle:"c1", logo_url:"http://c1.img"},
-    {'name': "C2", 'num_employees': 2, description:"Desc2", handle:"c2", logo_url:"http://c2.img"},
-    {'name': "C3", 'num_employees': 3, description:"Desc3", handle:"c3", logo_url:"http://c3.img"}])
+    expect(companies).toEqual([{'name': "C1", numEmployees: 1, description:"Desc1", handle:"c1", logoUrl:"http://c1.img"},
+    {'name': "C2", numEmployees: 2, description:"Desc2", handle:"c2", logoUrl:"http://c2.img"},
+    {'name': "C3", numEmployees: 3, description:"Desc3", handle:"c3", logoUrl:"http://c3.img"}])
   })
 
   test("works test3", async function(){
@@ -236,9 +236,9 @@ describe("remove", function () {
       name: "c"
     }
     const companies = await Company.filterCompanies(params)
-    expect(companies).toEqual([{'name': "C1", 'num_employees': 1, description:"Desc1", handle:"c1", logo_url:"http://c1.img"},
-    {'name': "C2", 'num_employees': 2, description:"Desc2", handle:"c2", logo_url:"http://c2.img"},
-    {'name': "C3", 'num_employees': 3, description:"Desc3", handle:"c3", logo_url:"http://c3.img"}])
+    expect(companies).toEqual([{'name': "C1", numEmployees: 1, description:"Desc1", handle:"c1", logoUrl:"http://c1.img"},
+    {'name': "C2", numEmployees: 2, description:"Desc2", handle:"c2", logoUrl:"http://c2.img"},
+    {'name': "C3", numEmployees: 3, description:"Desc3", handle:"c3", logoUrl:"http://c3.img"}])
   })
   
   test("works test4", async function(){

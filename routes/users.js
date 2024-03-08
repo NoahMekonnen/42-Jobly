@@ -71,7 +71,7 @@ router.get("/", ensureLoggedIn, ensureAdmin, async function (req, res, next) {
 router.get("/:username", ensureLoggedIn, async function (req, res, next) {
   try {
     console.log("hi")
-    if (!(res.locals.user.isAdmin | req.params.username == res.locals.user.username)) throw new UnauthorizedError("You must be this user or the Admin to do this")
+    if (!(res.locals.user.isAdmin | req.params.username == res.locals.user.username)) throw new UnauthorizedError("You must be this user or an Admin to do this")
     const user = await User.get(req.params.username);
     return res.json({ user });
   } catch (err) {
@@ -92,16 +92,17 @@ router.get("/:username", ensureLoggedIn, async function (req, res, next) {
 
 router.patch("/:username", ensureLoggedIn, async function (req, res, next) {
   try {
-    const user = await User.update(req.params.username, req.body);
-    if (!user) throw NotFoundError("Not found")
+    const user1 = await User.get(req.params.username)
+    if (!user1) throw NotFoundError("Not found")
 
-    if (!(res.locals.user.isAdmin | req.params.username == res.locals.user.username)) throw new UnauthorizedError("You must be this user or the Admin to do this")
+    if (!(res.locals.user.isAdmin | req.params.username == res.locals.user.username)) throw new UnauthorizedError("You must be this user or an Admin to do this")
     const validator = jsonschema.validate(req.body, userUpdateSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
 
+    const user = await User.update(req.params.username, req.body);
     return res.json({ user });
   } catch (err) {
     return next(err);
@@ -116,7 +117,7 @@ router.patch("/:username", ensureLoggedIn, async function (req, res, next) {
 
 router.delete("/:username", ensureLoggedIn, async function (req, res, next) {
   try {
-    if (!(res.locals.user.isAdmin | req.params.username == res.locals.user.username)) throw new UnauthorizedError("You must be this user or the Admin to do this")
+    if (!(res.locals.user.isAdmin | req.params.username == res.locals.user.username)) throw new UnauthorizedError("You must be this user or an Admin to do this")
     await User.remove(req.params.username);
     return res.json({ deleted: req.params.username });
   } catch (err) {
