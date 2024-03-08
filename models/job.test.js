@@ -38,7 +38,7 @@ describe("create", function () {
             {
                 title: "software engineer",
                 salary: 55000,
-                equity: "1",
+                equity: 1,
                 companyHandle: "c1"
             }
         ]);
@@ -77,7 +77,7 @@ describe("findAll", function () {
             {
                 title: "teacher",
                 salary: 70000,
-                equity: 0,
+                equity: "0",
                 companyHandle: "c1"
             }
         ]);
@@ -89,7 +89,7 @@ describe("findAll", function () {
 describe("get", function () {
   test("works", async function () {
     await Job.create(newJob2)
-    let job = await Job.get("1");
+    let job = await Job.get(1);
     expect(company).toEqual({
         title: "janitor",
         salary: 40000,
@@ -98,7 +98,7 @@ describe("get", function () {
     });
   });
 
-  test("not found if no such company", async function () {
+  test("not found if no such job", async function () {
     try {
       await Job.get(5);
       fail();
