@@ -44,7 +44,7 @@ function ensureLoggedIn(req, res, next) {
 
 function ensureAdmin(req, res, next) {
   try {
-    if (!req.locals.user.isAdmin) throw new ExpressError("You need to be an admin to do that ", 401)
+    if (!res.locals.user.isAdmin) throw new ExpressError("You need to be an admin to do that ", 401)
     return next()
   } catch (err) {
     return next(err)
