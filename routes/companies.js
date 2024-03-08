@@ -58,16 +58,18 @@ router.get("/", async function (req, res, next) {
     const params = {}
 
     if (req.query.name){ params.name = req.query.name }
-    if (req.query.minEmployees){ params.minEmployees = req.query.minEmployees }
-    if (req.query.maxEmployees){ params.maxEmployees = req.query.maxEmployees }
+    if (req.query.minEmployees){ params.minEmployees = parseInt(req.query.minEmployees) }
+    if (req.query.maxEmployees){ params.maxEmployees = parseInt(req.query.maxEmployees) }
+    
 
-    if ( minEmployees > maxEmployees) throw new BadRequestError("min must be <= max")
-
-    const validator = jsonschema.validate(req.body, companyFilterSchema);
+    const validator = jsonschema.validate(params, companyFilterSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
+
+    if ( minEmployees > maxEmployees) throw new BadRequestError("min must be <= max")
+
     const companies = await Company.filterCompanies(params)
 
     return res.json({ companies });

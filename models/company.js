@@ -142,12 +142,20 @@ class Company {
   }
 
   /**
-   * filters all companies by given name, 
-   * min number of employees, 
-   * and max num of employees
+   * filters all companies by given name, min number of employees, and max num of employees
+   * using a string builder
+   * 
+   * Data can include: {name, minEmployees, maxEmployees}
+   * 
+   * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]]
   */
 
   static async filterCompanies(params) {
+    let finalquery = `SELECT handle, 
+                name, 
+                description, 
+                num_employees AS "numEmployees", 
+                logo_url AS "logoUrl" FROM companies WHERE `
     let query = `SELECT handle, 
                 name, 
                 description, 
@@ -156,18 +164,18 @@ class Company {
     let inputs = []
     if (params.name) {
       query += 'name LIKE $1 OR name LIKE $2'
-      inputs.push("%"+params.name.toLowerCase()+"%")
-      inputs.push("%"+params.name.toUpperCase()+"%")
+      inputs.push("%" + params.name.toLowerCase() + "%")
+      inputs.push("%" + params.name.toUpperCase() + "%")
       if (params.minEmployees) {
-        query += 'AND num_employees >=$3'
+        query += ' AND num_employees >= $3'
         inputs.push(params.minEmployees)
         if (params.maxEmployees) {
-          query += 'AND num_employees <=$4'
+          query += ' AND num_employees <=$4'
           inputs.push(params.maxEmployees)
         }
-      }else{
+      } else {
         if (params.maxEmployees) {
-          query += 'AND num_employees <= $3'
+          query += ' AND num_employees <= $3'
           inputs.push(params.maxEmployees)
         }
       }
@@ -176,20 +184,20 @@ class Company {
         query += 'num_employees >=$1'
         inputs.push(params.minEmployees)
         if (params.maxEmployees) {
-          query += 'AND num_employees <=$2'
+          query += ' AND num_employees <= $2'
           inputs.push(params.maxEmployees)
         }
       } else {
         if (params.maxEmployees) {
-          query += 'num_employees <=$1'
+          query += ' num_employees <= $1'
           inputs.push(params.maxEmployees)
         }
       }
     }
-    if (query=='SELECT * FROM companies WHERE '){
-      query = 'SELECT * FROM companies'
+    if (query == finalquery) {
+      query = `SELECT handle, name, description, num_employees AS "numEmployees", logo_url AS "logoUrl" FROM companies`
     }
-    const result = await db.query(query,inputs)
+    const result = await db.query(query, inputs)
     const companies = result.rows
     return companies
   }

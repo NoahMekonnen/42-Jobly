@@ -92,7 +92,7 @@ describe("GET /companies", function () {
               numEmployees: 3,
               logoUrl: "http://c3.img",
             },
-          ],
+          ]
     });
   });
 
@@ -236,8 +236,20 @@ describe("GET /companies", function(){
   })
 
   test("works test2", async function(){
-    const res = request(app)
+    const res = await request(app)
     .get('/companies?minEmployees=1000')
     expect(res.statusCode).toEqual(200)
+  })
+
+  test("min>max doesn't work", async function(){
+    const res = await request(app)
+    .get('/companies?minEmployees=2&maxEmployees=1')
+    expect(res.statusCode).toEqual(400)
+  })
+
+  test("invalid data", async function(){
+    const res = await request(app)
+    .get('/companies?minEmployees=max')
+    expect(res.statusCode).toEqual(400)
   })
 })
