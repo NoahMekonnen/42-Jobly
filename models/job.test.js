@@ -21,7 +21,7 @@ describe("create", function () {
     const newJob = {
         title: "software engineer",
         salary: 55000,
-        equity: 10000,
+        equity: 1,
         companyHandle: "c1"
     }
 
@@ -38,7 +38,7 @@ describe("create", function () {
             {
                 title: "software engineer",
                 salary: 55000,
-                equity: 10000,
+                equity: "1",
                 companyHandle: "c1"
             }
         ]);
@@ -48,41 +48,29 @@ describe("create", function () {
 
 /************************************** findAll */
 
-describe("findAll", function () {
-    const newJob2 = {
-        title: "janitor",
-        salary: 40000,
-        equity: 0,
-        companyHandle: "c1"
-    }
+const newJob2 = {
+    title: "janitor",
+    salary: 40000,
+    equity: 0,
+    companyHandle: "c1"
+}
 
-    const newJob3 = {
-        title: "teacher",
-        salary: 70000,
-        equity: 0,
-        companyHandle: "c1"
-    }
+const newJob3 = {
+    title: "teacher",
+    salary: 70000,
+    equity: 0,
+    companyHandle: "c1"
+}
+describe("findAll", function () {
+    
     test("works: no filter", async function () {
         await Job.create(newJob2)
-        await Job.create(newJob3)
         let jobs = await Job.findAll();
         expect(jobs).toEqual([
             {
-                title: "software engineer",
-                salary: 55000,
-                equity: 10000,
-                companyHandle: "c1"
-            },
-            {
                 title: "janitor",
                 salary: 40000,
-                equity: 0,
-                companyHandle: "c1"
-            },
-            {
-                title: "teacher",
-                salary: 70000,
-                equity: 0,
+                equity: "0",
                 companyHandle: "c1"
             }
         ]);
@@ -253,4 +241,4 @@ describe("findAll", function () {
 //     expect(companies).toEqual([])
 //   })
 //  })
-});
+

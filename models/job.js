@@ -21,7 +21,7 @@ class Job {
       `INSERT INTO jobs
            (title, salary, equity, company_handle)
            VALUES ($1, $2, $3, $4)
-           RETURNING itle, salary, equity, company_handle AS companyHandle"`,
+           RETURNING title, salary, equity, company_handle AS "companyHandle"`,
       [
         title,
         salary,
@@ -44,7 +44,7 @@ class Job {
       `SELECT title,
                   salary,
                   equity,
-                  company_handle AS companyHandle
+                  company_handle AS "companyHandle"
            FROM jobs
            ORDER BY title`);
     return jobsRes.rows;
@@ -62,7 +62,7 @@ class Job {
       `SELECT title,
                   salary,
                   equity,
-                  company_handle AS companyHandle
+                  company_handle AS "companyHandle"
            FROM jobs
            WHERE id = $1`,
       [id]);
@@ -100,7 +100,7 @@ class Job {
                       RETURNING title, 
                                 salary, 
                                 equity, 
-                                company_handle AS companyHandle
+                                company_handle AS "companyHandle"
                                 `;
     const result = await db.query(querySql, [...values, handle]);
     const job = result.rows[0];
