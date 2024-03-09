@@ -11,6 +11,8 @@ async function commonBeforeAll() {
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM companies");
 
+  await db.query("DELETE FROM jobs");
+
   await Company.create(
       {
         handle: "c1",
@@ -75,7 +77,7 @@ async function commonBeforeEach() {
 }
 
 async function commonAfterEach() {
-  await db.query("ROLLBACK");
+  // await db.query("ROLLBACK");
 }
 
 async function commonAfterAll() {

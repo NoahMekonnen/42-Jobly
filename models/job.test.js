@@ -1,5 +1,7 @@
 "use strict";
 
+process.env.NODE_ENV = "test"
+
 const db = require("../db.js");
 const { BadRequestError, NotFoundError } = require("../expressError");
 const Job = require("./job.js");
@@ -15,15 +17,32 @@ beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
+const newJob = {
+    id:1,
+    title: "software engineer",
+    salary: 55000,
+    equity: 1,
+    companyHandle: "c1"
+}
+
+const newJob2 = {
+    id: 2,
+    title: "janitor",
+    salary: 40000,
+    equity: 0,
+    companyHandle: "c1"
+}
+
+const newJob3 = {
+    title: "teacher",
+    salary: 70000,
+    equity: 0,
+    companyHandle: "c1"
+}
+
 /************************************** create */
 
 describe("create", function () {
-    const newJob = {
-        title: "software engineer",
-        salary: 55000,
-        equity: 1,
-        companyHandle: "c1"
-    }
 
     test("works", async function () {
         let job = await Job.create(newJob);
@@ -38,7 +57,7 @@ describe("create", function () {
             {
                 title: "software engineer",
                 salary: 55000,
-                equity: 1,
+                equity: "1",
                 company_handle: "c1"
             }
         ]);
@@ -48,19 +67,6 @@ describe("create", function () {
 
 /************************************** findAll */
 
-const newJob2 = {
-    title: "janitor",
-    salary: 40000,
-    equity: 0,
-    companyHandle: "c1"
-}
-
-const newJob3 = {
-    title: "teacher",
-    salary: 70000,
-    equity: 0,
-    companyHandle: "c1"
-}
 describe("findAll", function () {
     test("works: no filter", async function () {
         await Job.create(newJob2)
@@ -87,9 +93,12 @@ describe("findAll", function () {
 
 describe("get", function () {
   test("works", async function () {
-    await Job.create(newJob2)
+    const n1 = await Job.create(newJob)
+    const n2 = await Job.create(newJob2)
+    
     let job = await Job.get(2);
-    expect(company).toEqual({
+
+    expect(job).toEqual({
         title: "janitor",
         salary: 40000,
         equity: "0",
@@ -114,7 +123,7 @@ describe("update", function () {
     title:"project manager",
     salary:75000,
     equity:.5,
-    company_handle:"c2"
+    companyHandle:"c2"
   };
 
   test("works", async function () {

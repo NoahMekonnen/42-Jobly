@@ -30,13 +30,13 @@ class Job {
       ],
     );
     const job = result.rows[0];
-
+      
     return job;
   }
 
   /** Find all jobs.
    *
-   * Returns [{id, title, salary, equity, companyHandle}, ...]
+   * Returns [{ title, salary, equity, companyHandle}, ...]
    * */
 
   static async findAll() {
@@ -52,7 +52,7 @@ class Job {
 
   /** Given a job id, return data about job.
    *
-   * Returns {id, title, salary, equity, companyHandle}
+   * Returns { title, salary, equity, companyHandle}
    *
    * Throws NotFoundError if not found.
    **/
@@ -66,9 +66,9 @@ class Job {
            FROM jobs
            WHERE id = $1`,
       [id]);
-
+      
     const job = jobRes.rows[0];
-    console.log(job,"JOBBB")
+    console.log(jobRes.rows,"ROWS")
 
     if (!job) throw new NotFoundError(`No job: ${id}`);
 
