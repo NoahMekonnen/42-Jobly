@@ -150,6 +150,14 @@ describe("update", function () {
   //   });
   // })
   test("not found if no such job", async function () {
+    try {
+      await Job.update(5,updateData);
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+  test("not found if no such job", async function () {
     console.log("hi")
       const resp = await Job.update(47, updateData);
       console.log(resp,"RESP")
