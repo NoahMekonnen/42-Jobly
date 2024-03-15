@@ -68,7 +68,6 @@ class Job {
       [id]);
       
     const job = jobRes.rows[0];
-    console.log(jobRes.rows,"ROWS")
 
     if (!job) throw new NotFoundError(`No job: ${id}`);
 
@@ -105,9 +104,9 @@ class Job {
                                 `;
     const result = await db.query(querySql, [...values, id]);
     const job = result.rows[0];
-
+  
     if (!job) throw new NotFoundError(`No job: ${id}`);
-
+    console.log(!job,"HIIIII")
     return job;
   }
 

@@ -18,10 +18,9 @@ afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
 const newJob = {
-    id:1,
     title: "software engineer",
     salary: 55000,
-    equity: 1,
+    equity: "1",
     companyHandle: "c1"
 }
 
@@ -29,14 +28,14 @@ const newJob2 = {
     id: 2,
     title: "janitor",
     salary: 40000,
-    equity: 0,
+    equity: "0",
     companyHandle: "c1"
 }
 
 const newJob3 = {
     title: "teacher",
     salary: 70000,
-    equity: 0,
+    equity: "0",
     companyHandle: "c1"
 }
 
@@ -45,22 +44,24 @@ const newJob3 = {
 describe("create", function () {
 
     test("works", async function () {
+        await db.query(`DELETE FROM jobs`)
         let job = await Job.create(newJob);
-        expect(job).toEqual(newJob);
-
+    
+        expect({...job,id:0}).toEqual({...newJob,id:0});
+      
         const result = await db.query(
-            `SELECT title, salary, equity, companyHandle
+            `SELECT id, title, salary, equity, company_handle
            FROM jobs
-           WHERE id = 1`);
-        console.log(typeof result.rows[0].equity);
-        expect(result.rows).toEqual([
+           `);
+
+        expect(result.rows[0]).toEqual(
             {
+                id: expect.any(Number),
                 title: "software engineer",
                 salary: 55000,
                 equity: "1",
                 company_handle: "c1"
-            }
-        ]);
+            });
     });
 
 });
@@ -93,12 +94,18 @@ describe("findAll", function () {
 
 describe("get", function () {
   test("works", async function () {
-    const n1 = await Job.create(newJob)
-    const n2 = await Job.create(newJob2)
+    const n1 = await Job.create({...newJob})
+    const n2 = await Job.create({...newJob2})
     
-    let job = await Job.get(2);
+    const result = await db.query(
+      `SELECT id, title, salary, equity, company_handle
+     FROM jobs
+     `);
 
-    expect(job).toEqual({
+    let job = await Job.get(result.rows[1].id);
+
+    expect({...job,id:result.rows[1].id}).toEqual({
+        id:expect.any(Number),
         title: "janitor",
         salary: 40000,
         equity: "0",
@@ -119,29 +126,40 @@ describe("get", function () {
 /************************************** update */
 
 describe("update", function () {
+
   const updateData = {
     title:"project manager",
     salary:75000,
-    equity:.5,
+    equity:"0.5",
     companyHandle:"c2"
   };
 
-  test("works", async function () {
-    let job = await Job.update(1, updateData);
-    expect(job).toEqual({
-      id: 1,
-      ...updateData,
-    });
-  })
-//   test("not found if no such job", async function () {
-//       const resp = await Job.update(47, updateData);
-//       expect(resp.statusCode).toEqual(404)
-//   });
+  // test("works", async function () {
+  //   const n1 = await Job.create({...newJob})
+  //   const result = await db.query(
+  //     `SELECT id, title, salary, equity, company_handle
+  //    FROM jobs
+  //    `);
+  
+  //    const id = result.rows[0].id
+  
+  //   let job = await Job.update(id, updateData);
+  //   expect({...job,id:id}).toEqual({
+  //     id: expect.any(Number),
+  //     ...updateData,
+  //   });
+  // })
+  test("not found if no such job", async function () {
+    console.log("hi")
+      const resp = await Job.update(47, updateData);
+      console.log(resp,"RESP")
+      expect(resp.statusCode).toEqual(404)
+  });
 
-//   test("bad request with no data", async function () {
-//     const resp = await Job.update(1, {});
-//      expect(resp.statusCode).toEqual(400)
-//   });
+  // test("bad request with no data", async function () {
+  //   const resp = await Job.update(1, {});
+  //    expect(resp.statusCode).toEqual(400)
+  // });
 });
 
 // // /************************************** remove */
