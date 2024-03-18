@@ -6,11 +6,11 @@ const jsonschema = require("jsonschema");
 const express = require("express");
 
 const { BadRequestError, UnauthorizedError } = require("../expressError");
-const { ensureLoggedIn } = require("../middleware/auth");
+const { ensureLoggedIn, ensureAdmin } = require("../middleware/auth");
 const Job = require("../models/job");
 
 const jobNewSchema = require("../schemas/jobNew.json");
-// const jobUpdateSchema = require("../schemas/jobUpdate.json");
+const jobUpdateSchema = require("../schemas/jobUpdate.json");
 // const jobFilterSchema = require("../schemas/jobfilter.json");
 
 const router = new express.Router();
@@ -22,10 +22,10 @@ const router = new express.Router();
  *
  * Returns { title, salary, equity, companyHandle }
  *
- * Authorization required: login
+ * Authorization required: admin
  */
 
-router.post("/", ensureLoggedIn, async function (req, res, next) {
+router.post("/", ensureAdmin, async function (req, res, next) {
   try {
     if (!(res.locals.user.isAdmin)) throw new UnauthorizedError("You must be an Admin to do this")
 
@@ -89,18 +89,18 @@ router.get("/:id", async function (req, res, next) {
  *
  * Returns { id, name, description, numEmployees, logo_url }
  *
- * Authorization required: login
+ * Authorization required: admin
  */
 
-router.patch("/:id", ensureLoggedIn, async function (req, res, next) {
+router.patch("/:id", ensureAdmin, async function (req, res, next) {
   try {
     if (!(res.locals.user.isAdmin)) throw new UnauthorizedError("You must be an Admin to do this")
 
-    // const validator = jsonschema.validate(req.body, companyUpdateSchema);
-    // if (!validator.valid) {
-    //   const errs = validator.errors.map(e => e.stack);
-    //   throw new BadRequestError(errs);
-    // }
+    const validator = jsonschema.validate(req.body, companyUpdateSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errs);
+    }
 
     const job = await Job.update(req.params.id, req.body);
     return res.json({ job });
@@ -111,10 +111,10 @@ router.patch("/:id", ensureLoggedIn, async function (req, res, next) {
 
 /** DELETE /[id]  =>  { deleted: id }
  *
- * Authorization: login
+ * Authorization: admin
  */
 
-router.delete("/:id", ensureLoggedIn, async function (req, res, next) {
+router.delete("/:id", ensureAdmin, async function (req, res, next) {
   try {
     if (!(res.locals.user.isAdmin)) throw new UnauthorizedError("You must be an Admin to do this")
 

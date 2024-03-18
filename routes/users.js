@@ -70,7 +70,7 @@ router.get("/", ensureLoggedIn, ensureAdmin, async function (req, res, next) {
 
 router.get("/:username", ensureLoggedIn, async function (req, res, next) {
   try {
-    console.log("hi")
+    console.log(res.locals.isAdmin,"IsAdmin")
     if (!(res.locals.user.isAdmin | req.params.username == res.locals.user.username)) throw new UnauthorizedError("You must be this user or an Admin to do this")
     const user = await User.get(req.params.username);
     return res.json({ user });
