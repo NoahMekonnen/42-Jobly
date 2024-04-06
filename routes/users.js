@@ -70,14 +70,37 @@ router.get("/", ensureLoggedIn, ensureAdmin, async function (req, res, next) {
 
 router.get("/:username", ensureLoggedIn, async function (req, res, next) {
   try {
-    console.log(res.locals.isAdmin,"IsAdmin")
     if (!(res.locals.user.isAdmin | req.params.username == res.locals.user.username)) throw new UnauthorizedError("You must be this user or an Admin to do this")
     const user = await User.get(req.params.username);
+    const applications = await User.getApplications(req.params.id)
+    user.jobs = applications
     return res.json({ user });
   } catch (err) {
     return next(err);
   }
 });
+
+/** POST / { user }  => { user, token }
+ *
+ * Apply a user to a job. This is available to admins and the user
+ * who wants to apply to a job himself
+ *
+ * This returns the message shown below with the given job id:
+ *  {replied: id }
+ *
+ * Authorization required: None
+ **/
+
+router.post("/:username/jobs/:id", async function (req, res, next){
+  try{
+    if (!(res.locals.user.isAdmin | req.params.username == res.locals.user.username)) throw new UnauthorizedError("You must be this user or an Admin to do this")
+    await User.apply(req.params.username, req.params.id)
+
+    return res.json({replied: req.params.id})
+  }catch(err){
+    next(err)
+  }
+})
 
 
 /** PATCH /[username] { user } => { user }

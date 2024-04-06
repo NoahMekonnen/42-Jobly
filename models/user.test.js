@@ -13,11 +13,45 @@ const {
   commonAfterEach,
   commonAfterAll,
 } = require("./_testCommon");
+const Job = require("./job.js");
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
+
+
+// await User.register({
+//   username: "u4",
+//   firstName: "U4F",
+//   lastName: "U4L",
+//   email: "user4@user.com",
+//   password: "password4",
+//   isAdmin: true,
+// });
+
+const newJob = {
+  title: "software engineer",
+  salary: 55000,
+  equity: "1",
+  companyHandle: "c1"
+}
+
+const newJob2 = {
+  id: 2,
+  title: "janitor",
+  salary: 40000,
+  equity: "0",
+  companyHandle: "c1"
+}
+
+const newJob3 = {
+  title: "teacher",
+  salary: 70000,
+  equity: "0",
+  companyHandle: "c1"
+}
+
 
 /************************************** authenticate */
 
@@ -228,3 +262,45 @@ describe("remove", function () {
     }
   });
 });
+
+/************************************** getApplications */
+
+describe("getApplications", function(){
+  test("test getApplication works", async function(){
+    await User.register({
+      username: "u3",
+      firstName: "U3F",
+      lastName: "U3L",
+      email: "user3@user.com",
+      password: "password3",
+      isAdmin: false,
+    });
+    
+    const job1 = await Job.create({...newJob})
+    const job3 = await Job.create({...newJob3})
+
+    await User.apply("u3",job1.id)
+    await User.apply("u3",job3.id)
+
+    const applications = await User.getApplications("u3")
+  
+    expect(applications.length).toEqual(2)
+    expect(applications[0].job_id).toEqual(job1.id)
+    expect(applications[1].job_id).toEqual(job3.id)
+  })
+
+  test("test getApplication works with no applications", async function(){
+    await User.register({
+      username: "u3",
+      firstName: "U3F",
+      lastName: "U3L",
+      email: "user3@user.com",
+      password: "password3",
+      isAdmin: false,
+    });
+    
+    const applications = await User.getApplications("u3")
+    
+    expect(applications.length).toEqual(0)
+  })
+})

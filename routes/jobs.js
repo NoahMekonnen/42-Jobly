@@ -11,7 +11,7 @@ const Job = require("../models/job");
 
 const jobNewSchema = require("../schemas/jobNew.json");
 const jobUpdateSchema = require("../schemas/jobUpdate.json");
-// const jobFilterSchema = require("../schemas/jobfilter.json");
+const jobFilterSchema = require("../schemas/jobfilter.json");
 
 const router = new express.Router();
 
@@ -20,12 +20,12 @@ const router = new express.Router();
  *
  * job should be { title, salary, equity, companyHandle }
  *
- * Returns { title, salary, equity, companyHandle }
+ * Returns { id, title, salary, equity, companyHandle }
  *
  * Authorization required: admin
  */
 
-router.post("/", ensureAdmin, async function (req, res, next) {
+router.post("/",ensureLoggedIn, ensureAdmin, async function (req, res, next) {
   try {
     if (!(res.locals.user.isAdmin)) throw new UnauthorizedError("You must be an Admin to do this")
 
@@ -43,7 +43,12 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 });
 
 /** GET /  =>
- *   { companies: [ { id, title, salary, equity, companyHandle }, ...] }
+ *   { jobs: [ { id, title, salary, equity, companyHandle }, ...] }
+ * 
+ * Can filter on provided search filters:
+ * - minSalary
+ * - hasEquity
+ * - title (will find case-insensitive, partial matches)
  *
  * Authorization required: none
  */
@@ -51,13 +56,22 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 router.get("/", async function (req, res, next) {
   try {
 
-    // const validator = jsonschema.validate(params, jobFilterSchema);
-    // if (!validator.valid) {
-    //   const errs = validator.errors.map(e => e.stack);
-    //   throw new BadRequestError(errs);
-    // }
+    const minSalary = req.query.minSalary
+    const title = req.query.title
+    const hasEquity = req.query.hasEquity
+    const params = {}
 
-    const jobs = await Job.findAll()
+    if (minSalary){ params.minSalary = parseInt(minSalary) }
+    if (title){ params.title = title }
+    if (hasEquity){ params.hasEquity = hasEquity }
+
+    const validator = jsonschema.validate(params, jobFilterSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errs);
+    }
+
+    const jobs = await Job.filterJobs(params)
 
     return res.json({ jobs });
   } catch (err) {
@@ -67,7 +81,7 @@ router.get("/", async function (req, res, next) {
 
 /** GET /[id]  =>  { job }
  *
- *  Job is { title, salary, equity, companyHandle }
+ *  Job is { id, title, salary, equity, companyHandle }
  *
  * Authorization required: none
  */
@@ -92,11 +106,11 @@ router.get("/:id", async function (req, res, next) {
  * Authorization required: admin
  */
 
-router.patch("/:id", ensureAdmin, async function (req, res, next) {
+router.patch("/:id", ensureLoggedIn, ensureAdmin, async function (req, res, next) {
   try {
     if (!(res.locals.user.isAdmin)) throw new UnauthorizedError("You must be an Admin to do this")
 
-    const validator = jsonschema.validate(req.body, companyUpdateSchema);
+    const validator = jsonschema.validate(req.body, jobUpdateSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
@@ -114,7 +128,7 @@ router.patch("/:id", ensureAdmin, async function (req, res, next) {
  * Authorization: admin
  */
 
-router.delete("/:id", ensureAdmin, async function (req, res, next) {
+router.delete("/:id",ensureLoggedIn, ensureAdmin, async function (req, res, next) {
   try {
     if (!(res.locals.user.isAdmin)) throw new UnauthorizedError("You must be an Admin to do this")
 

@@ -20,25 +20,32 @@ beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
+const newCompany = {
+  handle: "new",
+  name: "New",
+  logoUrl: "http://new.img",
+  description: "DescNew",
+  numEmployees: 10,
+};
+
+const newCompany2 = {
+  handle: "new2",
+  name: "New2",
+  logoUrl: "http://new2.img",
+  description: "DescNew2",
+  numEmployees: 10,
+};
+
+const newJob = {
+  title: "software engineer",
+  salary: 55000,
+  equity: "1",
+  companyHandle: "c1"
+}
+
 /************************************** POST /companies */
 
 describe("POST /companies", function () {
-  const newCompany = {
-    handle: "new",
-    name: "New",
-    logoUrl: "http://new.img",
-    description: "DescNew",
-    numEmployees: 10,
-  };
-
-  const newCompany2 = {
-    handle: "new2",
-    name: "New2",
-    logoUrl: "http://new2.img",
-    description: "DescNew2",
-    numEmployees: 10,
-  };
-
 
   test("ok for admin", async function () {
     const resp = await request(app)
@@ -131,7 +138,11 @@ describe("GET /companies", function () {
 
 describe("GET /companies/:handle", function () {
   test("works for anon", async function () {
+    const postResp = await request(app).post('/jobs')
+    .send({...newJob, salary: `${newJob.salary}`})
+    .set('authorization', `Bearer ${u4Token}`)
     const resp = await request(app).get(`/companies/c1`);
+
     expect(resp.body).toEqual({
       company: {
         handle: "c1",
@@ -139,6 +150,8 @@ describe("GET /companies/:handle", function () {
         description: "Desc1",
         numEmployees: 1,
         logoUrl: "http://c1.img",
+        jobs:[{...newJob,
+      id: postResp.body.job.id}]
       },
     });
   });
@@ -152,6 +165,7 @@ describe("GET /companies/:handle", function () {
         description: "Desc2",
         numEmployees: 2,
         logoUrl: "http://c2.img",
+        jobs:[]
       },
     });
   });

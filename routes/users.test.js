@@ -21,6 +21,14 @@ beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
+
+const newJob = {
+  title: "software engineer",
+  salary: "55000",
+  equity: "1",
+  companyHandle: "c1"
+}
+
 /************************************** POST /users */
 
 describe("POST /users", function () {
@@ -210,6 +218,7 @@ describe("GET /users/:username", function () {
         lastName: "U1L",
         email: "user1@user.com",
         isAdmin: false,
+        jobs: []
       },
     });
   });
@@ -363,3 +372,49 @@ describe("DELETE /users/:username", function () {
     expect(resp.statusCode).toEqual(404);
   });
 });
+
+/************************************** DELETE /users/:username/jobs/:id */
+
+describe("POST /users/:username/jobs/:id", function(){
+  test("works for admin", async function(){
+    const jobResp = await request(app)
+    .post(`/jobs`)
+    .send({...newJob})
+    .set("authorization", `Bearer ${u4Token}`)
+
+    const resp = await request(app)
+    .post(`/users/u3/jobs/${jobResp.body.job.id}`)
+    .set("authorization", `Bearer ${u4Token}`)
+    
+    expect(resp.statusCode).toEqual(200)
+    expect(parseInt(resp.body.replied)).toEqual(jobResp.body.job.id)
+  })
+
+  test("works for normal user", async function(){
+    const jobResp = await request(app)
+    .post(`/jobs`)
+    .send({...newJob})
+    .set("authorization", `Bearer ${u4Token}`)
+
+    const resp = await request(app)
+    .post(`/users/u2/jobs/${jobResp.body.job.id}`)
+    .set("authorization", `Bearer ${u2Token}`)
+    
+    expect(resp.statusCode).toEqual(200)
+    expect(parseInt(resp.body.replied)).toEqual(jobResp.body.job.id)
+  })
+ 
+
+  test("doesn't work for non admin and different user", async function(){
+    const jobResp = await request(app)
+    .post(`/jobs`)
+    .send({...newJob})
+    .set("authorization", `Bearer ${u4Token}`)
+
+    const resp = await request(app)
+    .post(`/users/u3/jobs/${jobResp.body.job.id}`)
+    .set("authorization", `Bearer ${u2Token}`)
+  
+    expect(resp.statusCode).toEqual(401)
+  })
+})

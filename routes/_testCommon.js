@@ -77,7 +77,7 @@ async function commonBeforeEach() {
 }
 
 async function commonAfterEach() {
-  // await db.query("ROLLBACK");
+  await db.query("ROLLBACK");
 }
 
 async function commonAfterAll() {

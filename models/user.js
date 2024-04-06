@@ -3,6 +3,7 @@
 const db = require("../db");
 const bcrypt = require("bcrypt");
 const { sqlForPartialUpdate } = require("../helpers/sql");
+const Job = require("./job")
 const {
   NotFoundError,
   BadRequestError,
@@ -203,6 +204,39 @@ class User {
     const user = result.rows[0];
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
+  }
+
+  /** Apply a user to a job using a username and a jobId */
+
+  static async apply(username, jobId){
+    const usernameResult = await this.get(username)
+    
+    if (!usernameResult) throw new NotFoundError(`No user: ${username}`)
+
+    const jobResult = await Job.get(jobId)
+
+    if (!jobResult) throw new NotFoundError(`No job_id: ${jobId}`)
+
+    let applicationResult = await db.query(
+      `INSERT INTO applications
+      (username, job_id)
+      VALUES ($1, $2)
+      RETURNING username, job_id`,
+      [username, jobId]
+    )
+    const application = applicationResult.rows[0];
+
+    return application
+  }
+
+  static async getApplications(username){
+    let result = await db.query(`SELECT * FROM applications
+    WHERE username = $1`,
+    [username])
+
+    const applications = result.rows
+    console.log(applications,"getapp")
+    return applications
   }
 }
 

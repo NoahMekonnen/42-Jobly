@@ -21,7 +21,7 @@ class Job {
       `INSERT INTO jobs
            (title, salary, equity, company_handle)
            VALUES ($1, $2, $3, $4)
-           RETURNING title, salary, equity, company_handle AS "companyHandle"`,
+           RETURNING id, title, salary, equity, company_handle AS "companyHandle"`,
       [
         title,
         salary,
@@ -29,8 +29,7 @@ class Job {
         companyHandle,
       ],
     );
-    const job = result.rows[0];
-      
+    let job = result.rows[0];
     return job;
   }
 
@@ -41,7 +40,8 @@ class Job {
 
   static async findAll() {
     const jobsRes = await db.query(
-      `SELECT title,
+      `SELECT id, 
+                  title,
                   salary,
                   equity,
                   company_handle AS "companyHandle"
@@ -59,14 +59,15 @@ class Job {
 
   static async get(id) {
     const jobRes = await db.query(
-      `SELECT title,
+      `SELECT id,
+                  title,
                   salary,
                   equity,
                   company_handle AS "companyHandle"
            FROM jobs
            WHERE id = $1`,
       [id]);
-      
+
     const job = jobRes.rows[0];
 
     if (!job) throw new NotFoundError(`No job: ${id}`);
@@ -90,23 +91,24 @@ class Job {
     const { setCols, values } = sqlForPartialUpdate(
       data,
       {
-        companyHandle:"company_handle"
+        companyHandle: "company_handle"
       });
     const IdVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE jobs 
                       SET ${setCols} 
                       WHERE id = ${IdVarIdx} 
-                      RETURNING title, 
+                      RETURNING id,
+                                title, 
                                 salary, 
                                 equity, 
                                 company_handle AS "companyHandle"
                                 `;
     const result = await db.query(querySql, [...values, id]);
     const job = result.rows[0];
-  
+
     if (!job) throw new NotFoundError(`No job: ${id}`);
-    console.log(!job,"HIIIII")
+
     return job;
   }
 
@@ -125,6 +127,70 @@ class Job {
     const job = result.rows[0];
 
     if (!job) throw new NotFoundError(`No company: ${id}`);
+  }
+
+  /** Filters jobs based on given params
+   * Possible params:
+   * - title
+   * - minSalary
+   * - hasEquity
+   */
+
+  static async filterJobs(params) {
+    let finalquery = `SELECT id, 
+                title, 
+                salary, 
+                equity, 
+                company_handle AS "companyHandle" 
+                FROM jobs WHERE `
+    let query = `SELECT id, 
+                title, 
+                salary, 
+                equity, 
+                company_handle AS "companyHandle" 
+                FROM jobs WHERE `
+    let inputs = []
+    if (params.title) {
+      query += 'title LIKE $1 OR title LIKE $2'
+      inputs.push("%" + params.title.toLowerCase() + "%")
+      inputs.push("%" + params.title.toUpperCase() + "%")
+      if (params.minSalary) {
+        query += ' AND salary >= $3'
+        inputs.push(params.minSalary)
+        if (params.hasEquity) {
+          query += ' AND equity > 0 OR equity < 0'
+        }
+      } else {
+        if (params.hasEquity) {
+          query += ' AND equity > 0 OR equity < 0'
+        }
+      }
+    } else {
+      if (params.minSalary) {
+        query += 'salary >= $1'
+        console.log(query,"Query1")
+        inputs.push(params.minSalary)
+        if (params.hasEquity) {
+          query += ' AND equity > 0 OR equity < 0'
+        }
+      } else {
+        if (params.hasEquity) {
+          query += ' AND equity > 0 OR equity < 0'
+        }
+      }
+    }
+    if (query == finalquery) {
+      query = `SELECT id, 
+      title, 
+      salary, 
+      equity, 
+      company_handle AS "companyHandle" 
+      FROM jobs`
+    }
+    console.log(query,inputs,"Query2")
+    const result = await db.query(query, inputs)
+    const jobs = result.rows
+    return jobs
   }
 
 }

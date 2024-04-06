@@ -70,17 +70,19 @@ describe("create", function () {
 
 describe("findAll", function () {
     test("works: no filter", async function () {
-        await Job.create(newJob2)
-        await Job.create(newJob3)
+        const job2 = await Job.create(newJob2)
+        const job3 = await Job.create(newJob3)
         let jobs = await Job.findAll();
         expect(jobs).toEqual([
             {
+                id: job2.id,
                 title: "janitor",
                 salary: 40000,
                 equity: "0",
                 companyHandle: "c1"
             },
             {
+                id: job3.id,
                 title: "teacher",
                 salary: 70000,
                 equity: "0",
@@ -187,3 +189,56 @@ describe("remove", function () {
     }
   });
 });
+
+/************************************** filterJobs */
+
+describe("filterJobs", function(){
+  test("first test filter", async function(){
+    const job1 = await Job.create({...newJob})
+    const job2 = await Job.create({...newJob2})
+    const job3 = await Job.create({...newJob3})
+
+    const jobs = await Job.filterJobs({minSalary:"50000"})
+
+    expect(jobs.length).toEqual(2)
+    expect(jobs[0].id).toEqual(job1.id) 
+    expect(jobs[1].id).toEqual(job3.id) 
+
+  })
+
+  test("second test filter", async function(){
+    const job1 = await Job.create({...newJob})
+    const job2 = await Job.create({...newJob2})
+    const job3 = await Job.create({...newJob3})
+
+    const jobs = await Job.filterJobs({minSalary:"40000", title:"i"})
+
+    expect(jobs.length).toEqual(2)
+    expect(jobs[0].id).toEqual(job1.id) 
+    expect(jobs[1].id).toEqual(job2.id) 
+
+  })
+
+  test("third test filter", async function(){
+    const job1 = await Job.create({...newJob})
+    const job2 = await Job.create({...newJob2})
+    const job3 = await Job.create({...newJob3})
+
+    const jobs = await Job.filterJobs({minSalary:"80000"})
+
+    expect(jobs.length).toEqual(0)
+  })
+
+  test("test filter with empty params", async function(){
+    const job1 = await Job.create({...newJob})
+    const job2 = await Job.create({...newJob2})
+    const job3 = await Job.create({...newJob3})
+
+    const jobs = await Job.filterJobs([])
+
+    expect(jobs.length).toEqual(3)
+    expect(jobs[0].id).toEqual(job1.id) 
+    expect(jobs[1].id).toEqual(job2.id) 
+    expect(jobs[2].id).toEqual(job3.id) 
+  })
+})
