@@ -217,16 +217,13 @@ class User {
 
     if (!jobResult) throw new NotFoundError(`No job_id: ${jobId}`)
 
-    let applicationResult = await db.query(
+    await db.query(
       `INSERT INTO applications
       (username, job_id)
       VALUES ($1, $2)
       RETURNING username, job_id`,
       [username, jobId]
     )
-    const application = applicationResult.rows[0];
-
-    return application
   }
 
   static async getApplications(username){

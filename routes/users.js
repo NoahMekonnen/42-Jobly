@@ -140,7 +140,7 @@ router.patch("/:username", ensureLoggedIn, async function (req, res, next) {
 
 router.delete("/:username", ensureLoggedIn, async function (req, res, next) {
   try {
-    if (!(res.locals.user.isAdmin | req.params.username == res.locals.user.username)) throw new UnauthorizedError("You must be this user or an Admin to do this")
+    if (!(res.locals.user.isAdmin || req.params.username == res.locals.user.username)) throw new UnauthorizedError("You must be this user or an Admin to do this")
     await User.remove(req.params.username);
     return res.json({ deleted: req.params.username });
   } catch (err) {

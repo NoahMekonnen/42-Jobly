@@ -25,7 +25,7 @@ const router = new express.Router();
  * Authorization required: admin
  */
 
-router.post("/",ensureLoggedIn, ensureAdmin, async function (req, res, next) {
+router.post("/", ensureAdmin, async function (req, res, next) {
   try {
     if (!(res.locals.user.isAdmin)) throw new UnauthorizedError("You must be an Admin to do this")
 

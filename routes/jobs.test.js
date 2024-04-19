@@ -130,6 +130,7 @@ describe("GET /jobs/:id", function () {
 
     const resp = await request(app).get(`/jobs/${postResp.body.job.id}`);
     expect(resp.body.job.id).toEqual(postResp.body.job.id);
+    expect(resp.statusCode).toEqual(200)
   });
 
 
